@@ -1,3 +1,5 @@
-test('adds 1 + 2 to equal 3', () => {
-    expect(1 + 2).toBe(3);
+import { getRandomNumber } from "..";
+
+test("getRandomNumber() 가 세자리인지?", () => {
+  expect(getRandomNumber()).toHaveLength(3);
 });
