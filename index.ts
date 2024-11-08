@@ -35,9 +35,13 @@ function getRandomNumber(): string {
 
 async function inputAnswer(randomNumber: string) {
   const answer = await rl.question("숫자를 입력해주세요: ");
-
   if (answer === "2") {
     endGame();
+  }
+
+  if(!inputValidate(answer)) {
+    console.log("잘못된 값을 입력했습니다.");
+    return inputAnswer(randomNumber);
   }
 
   const isStrike = compareAnswer(randomNumber, answer);
@@ -48,6 +52,16 @@ async function inputAnswer(randomNumber: string) {
   } else {
     inputAnswer(randomNumber);
   }
+}
+
+function inputValidate(input: string) {
+  if (isNaN(Number(input))) return false;
+  if (input.length !== 3) return false;
+
+  const set = new Set([...input]);
+  if (set.size !== 3) return false;
+
+  return true;
 }
 
 function compareAnswer(randomNumber: string, answer: string): boolean {
@@ -84,10 +98,3 @@ function endGame() {
   console.log("\n애플리케이션이 종료되었습니다.");
   process.exit();
 }
-
-/*
-예외처리 해야할 것
-1. 사용자 입력값 중복 X
-2. 숫자만 입력
-3. 3자리만 입력
-*/
