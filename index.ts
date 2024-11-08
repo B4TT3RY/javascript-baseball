@@ -21,15 +21,15 @@ async function startGame() {
   }
 }
 
-function getRandomNumber(): string {
-  const set: Set<number> = new Set();
+export function getRandomNumber(): string {
+  const numberSet: Set<number> = new Set();
 
-  while (set.size < 3) {
+  while (numberSet.size < 3) {
     const randomNumber = Math.floor(Math.random() * 9) + 1;
-    set.add(randomNumber);
+    numberSet.add(randomNumber);
   }
 
-  const returnRandomNumber = Array.from(set).join("");
+  const returnRandomNumber = Array.from(numberSet).join("");
   return returnRandomNumber;
 }
 
@@ -39,7 +39,7 @@ async function inputAnswer(randomNumber: string) {
     endGame();
   }
 
-  if(!inputValidate(answer)) {
+  if (!inputValidate(answer)) {
     console.log("잘못된 값을 입력했습니다.");
     return inputAnswer(randomNumber);
   }
@@ -54,17 +54,17 @@ async function inputAnswer(randomNumber: string) {
   }
 }
 
-function inputValidate(input: string) {
+export function inputValidate(input: string) {
   if (isNaN(Number(input))) return false;
   if (input.length !== 3) return false;
 
-  const set = new Set([...input]);
-  if (set.size !== 3) return false;
+  const inputSet = new Set([...input]);
+  if (inputSet.size !== 3) return false;
 
   return true;
 }
 
-function compareAnswer(randomNumber: string, answer: string): boolean {
+export function compareAnswer(randomNumber: string, answer: string): boolean {
   const strike = [...randomNumber]
     .map((element, index) => {
       if (answer[index] === element) return element;
@@ -82,16 +82,13 @@ function compareAnswer(randomNumber: string, answer: string): boolean {
     console.log(`${ball}볼`);
   } else if (strike > 0 && ball === 0) {
     console.log(`${strike}스트라이크`);
-    if (strike === 3) {
-      return true;
-    }
   } else if (strike > 0 && ball > 0) {
     console.log(`${ball}볼 ${strike}스트라이크`);
   } else {
     console.log("낫싱");
   }
 
-  return false;
+  return strike === 3;
 }
 
 function endGame() {
