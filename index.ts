@@ -65,18 +65,8 @@ export function inputValidate(input: string) {
 }
 
 export function compareAnswer(randomNumber: string, answer: string): boolean {
-  const strike = [...randomNumber]
-    .map((element, index) => {
-      if (answer[index] === element) return element;
-    })
-    .filter((element) => element !== undefined).length;
-
-  const ball = [...answer]
-    .map((element, index) => {
-      if (randomNumber[index] !== element && randomNumber.includes(element))
-        return element;
-    })
-    .filter((element) => element !== undefined).length;
+  const strike = getStrike(randomNumber, answer);
+  const ball = getBall(randomNumber, answer);
 
   if (strike === 0 && ball > 0) {
     console.log(`${ball}볼`);
@@ -89,6 +79,27 @@ export function compareAnswer(randomNumber: string, answer: string): boolean {
   }
 
   return strike === 3;
+}
+
+function getStrike(randomNumber: string, answer:string): number {
+  const strike = [...randomNumber]
+    .map((element, index) => {
+      if (answer[index] === element) return element;
+    })
+    .filter((element) => element !== undefined).length;
+
+  return strike;
+}
+
+function getBall(randomNumber: string, answer: string): number {
+  const ball = [...answer]
+    .map((element, index) => {
+      if (randomNumber[index] !== element && randomNumber.includes(element))
+        return element;
+    })
+    .filter((element) => element !== undefined).length;
+
+  return ball;
 }
 
 function endGame() {
