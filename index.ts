@@ -81,7 +81,7 @@ export function compareAnswer(randomNumber: string, answer: string): boolean {
   return strike === 3;
 }
 
-function getStrike(randomNumber: string, answer:string): number {
+export function getStrike(randomNumber: string, answer: string): number {
   const strike = [...randomNumber]
     .map((element, index) => {
       if (answer[index] === element) return element;
@@ -91,7 +91,7 @@ function getStrike(randomNumber: string, answer:string): number {
   return strike;
 }
 
-function getBall(randomNumber: string, answer: string): number {
+export function getBall(randomNumber: string, answer: string): number {
   const ball = [...answer]
     .map((element, index) => {
       if (randomNumber[index] !== element && randomNumber.includes(element))
