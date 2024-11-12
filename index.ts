@@ -13,7 +13,7 @@ async function startGame() {
   if (result === "1") {
     const randomNumber = getRandomNumber();
     console.log("\n컴퓨터가 숫자를 뽑았습니다.\n");
-    console.log(`정답: ${randomNumber}`);
+    // console.log(`정답: ${randomNumber}`);
 
     inputAnswer(randomNumber);
   } else if (result === "9") {

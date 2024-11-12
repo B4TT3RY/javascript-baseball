@@ -1,17 +1,20 @@
-import { getRandomNumber } from './index.ts';
-
 type SenderType = "computer" | "user";
 enum State {
-  START_GAME = 0,
-  RUNNING_GAME = 1
+  StartGame = 0,
+  RunningGame = 1,
+  EndGame = 2,
 }
 
-let state = State.START_GAME;
+document.addEventListener("DOMContentLoaded", () => {
+  startGame();
+});
+
+let state = State.StartGame;
 let randomNumber = "";
 
 const addChat = (sender: SenderType, message: string) => {
   const chat = document.createElement("p");
-  if(sender === "computer") {
+  if (sender === "computer") {
     chat.classList.add("computerChat");
   } else {
     chat.classList.add("userChat");
@@ -21,48 +24,117 @@ const addChat = (sender: SenderType, message: string) => {
   const chatBox = document.querySelector("div.chatBox");
   chatBox?.append(chat);
   chatBox?.scrollTo(0, chatBox.scrollHeight);
-}
+};
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const addUserChat = () => {
   const input = document.querySelector("input");
   if (!input) return;
 
   const message = input.value.trim();
-  if (message === '') return;
+  if (message === "") return;
 
   addChat("user", message);
   input.value = "";
 
   handleUserInput(message);
-}
+};
 
 const handleUserInput = (input: string) => {
-  switch (state as State) {
-    case State.START_GAME:
-      if (input === '1') {
-        randomNumber = getRandomNumber();
-      } else if (input === '9') {
-
-      }
-      break;
-    case State.RUNNING_GAME:
-
-      break;
+  if (state === State.StartGame) {
+    if (input === "1") {
+      randomNumber = getRandomNumber();
+      addChat("computer", "컴퓨터가 숫자를 뽑았습니다.");
+      addChat("computer", "세자리 숫자를 입력해주세요.");
+      state = State.RunningGame;
+    } else if (input === "9") {
+      endGame();
+    }
+  } else if (state === State.RunningGame) {
+    if (input === "2") {
+      return endGame();
+    }
+    if (!inputValidate(input)) {
+      return addChat("computer", "잘못된 값을 입력했습니다.");
+    }
+    const isStrike = compareAnswer(randomNumber, input);
+    if (isStrike) {
+      addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
+      addChat("computer", "-------게임 종료-------");
+      startGame();
+    }
   }
-}
+};
 
 const startGame = () => {
+  state = State.StartGame;
+  addChat("computer", "게임을 새로 시작하려면 1, 종료하려면 9를 입력하세요.");
+};
 
-}
+const compareAnswer = (randomNumber: string, answer: string) => {
+  const strike = getStrike(randomNumber, answer);
+  const ball = getBall(randomNumber, answer);
 
-const inputAnswer = () => {
+  if (strike === 0 && ball > 0) {
+    addChat("computer", `${ball}볼`);
+  } else if (strike > 0 && ball === 0) {
+    addChat("computer", `${strike}스트라이크`);
+  } else if (strike > 0 && ball > 0) {
+    addChat("computer", `${ball}볼 ${strike}스트라이크`);
+  } else {
+    addChat("computer", "낫싱");
+  }
 
-}
-
-const compareAnswer = () => {
-
-}
+  return strike === 3;
+};
 
 const endGame = () => {
-  addChat('computer', '애플리케이션이 종료되었습니다.');
+  addChat(
+    "computer",
+    "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
+  );
+  state = State.EndGame;
+};
+
+function getRandomNumber(): string {
+  const numberSet: Set<number> = new Set();
+
+  while (numberSet.size < 3) {
+    const randomNumber = Math.floor(Math.random() * 9) + 1;
+    numberSet.add(randomNumber);
+  }
+
+  const returnRandomNumber = Array.from(numberSet).join("");
+  return returnRandomNumber;
+}
+
+function inputValidate(input: string) {
+  if (isNaN(Number(input))) return false;
+  if (input.length !== 3) return false;
+
+  const inputSet = new Set(Array.from(input));
+  if (inputSet.size !== 3) return false;
+
+  return true;
+}
+
+function getStrike(randomNumber: string, answer: string): number {
+  const strike = Array.from(randomNumber)
+    .map((element, index) => {
+      if (answer[index] === element) return element;
+    })
+    .filter((element) => element !== undefined).length;
+
+  return strike;
+}
+
+function getBall(randomNumber: string, answer: string): number {
+  const ball = Array.from(answer)
+    .map((element, index) => {
+      if (randomNumber[index] !== element && randomNumber.includes(element))
+        return element;
+    })
+    .filter((element) => element !== undefined).length;
+
+  return ball;
 }
