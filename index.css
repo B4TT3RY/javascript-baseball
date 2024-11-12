@@ -3,8 +3,10 @@
 * {
   padding: 0;
   margin: 0;
-  font-family: "Wanted Sans Variable", "Wanted Sans", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-  overflow: none;
+  font-family: "Wanted Sans Variable", "Wanted Sans", -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", sans-serif;
 }
 
 body {
@@ -17,7 +19,7 @@ body {
   font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: .75rem;
+  gap: 0.75rem;
 }
 
 .header h1 {
@@ -42,7 +44,7 @@ body {
 
 .hamburgerButton {
   margin-left: auto;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   width: 2.25rem;
   height: 2.25rem;
   cursor: pointer;
@@ -55,6 +57,12 @@ body {
   justify-content: space-between;
 }
 
+@media (min-width: 1200px) {
+  .mainBox {
+    padding: 0 25rem;
+  }
+}
+
 .chatBox {
   padding: 1rem;
   display: flex;
@@ -65,12 +73,38 @@ body {
   flex: 1;
 }
 
-.chatBox p {
+.chatBox::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chatBox::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.chatBox::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.chatBox p:not(.alert) {
   max-width: 80%;
   font-size: 1.75rem;
-  padding: .75rem 1rem;
-  border-radius: .75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1.5rem;
   word-break: break-all;
+}
+
+.alert {
+  max-width: 80%;
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  word-break: break-all;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  border-radius: 2rem;
+  text-align: center;
 }
 
 .computerChat {
@@ -114,24 +148,4 @@ body {
   color: white;
   width: 2rem;
   height: 2rem;
-}
-
-@media (min-width: 1200px) {
-  .mainBox {
-    padding: 0 25rem;
-  }
-}
-
-.chatBox::-webkit-scrollbar {
-  width: 10px;
-}
-
-.chatBox::-webkit-scrollbar-thumb {
-  background: #647587;
-  border-radius: 10px;
-}
-
-.chatBox::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, .2);
-  border-radius: 10px;
 }

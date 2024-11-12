@@ -34,11 +34,19 @@ var addUserChat = function () {
     input.value = "";
     handleUserInput(message);
 };
+var addAlert = function (message) {
+    var alert = document.createElement("p");
+    alert.classList.add("alert");
+    alert.innerText = message;
+    var chatBox = document.querySelector("div.chatBox");
+    chatBox === null || chatBox === void 0 ? void 0 : chatBox.append(alert);
+    chatBox === null || chatBox === void 0 ? void 0 : chatBox.scrollTo(0, chatBox.scrollHeight);
+};
 var handleUserInput = function (input) {
     if (state === State.StartGame) {
         if (input === "1") {
             randomNumber = getRandomNumber();
-            addChat("computer", "컴퓨터가 숫자를 뽑았습니다.");
+            addAlert("컴퓨터가 숫자를 뽑았습니다.");
             addChat("computer", "세자리 숫자를 입력해주세요.");
             state = State.RunningGame;
         }
@@ -56,7 +64,7 @@ var handleUserInput = function (input) {
         var isStrike = compareAnswer(randomNumber, input);
         if (isStrike) {
             addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
-            addChat("computer", "-------게임 종료-------");
+            addAlert("게임 종료");
             startGame();
         }
     }
@@ -83,7 +91,7 @@ var compareAnswer = function (randomNumber, answer) {
     return strike === 3;
 };
 var endGame = function () {
-    addChat("computer", "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요.");
+    addAlert("애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요.");
     state = State.EndGame;
 };
 function getRandomNumber() {
