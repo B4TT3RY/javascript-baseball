@@ -1,13 +1,10 @@
 type SenderType = "computer" | "user";
 enum State {
-  StartGame = 0,
-  RunningGame = 1,
-  EndGame = 2,
+  StartGame = "1",
+  RunningGame = "2",
+  EndGame = "9",
 }
 
-const START_GAME = "1";
-const END_GAME_BEFORE_START_GAME = "9";
-const END_GAME = "2";
 const THREE_DIGIT_NUMBER = 3;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -60,16 +57,16 @@ const addUserChat = () => {
 
 const handleUserInput = (input: string) => {
   if (state === State.StartGame) {
-    if (input === START_GAME) {
+    if (input === State.StartGame) {
       randomNumber = getRandomNumber();
       addAlert("컴퓨터가 숫자를 뽑았습니다.");
       addChat("computer", "세자리 숫자를 입력해주세요.");
       state = State.RunningGame;
-    } else if (input === END_GAME_BEFORE_START_GAME) {
+    } else if (input === State.EndGame) {
       endGame();
     }
   } else if (state === State.RunningGame) {
-    if (input === END_GAME) return endGame();
+    if (input === State.RunningGame) return endGame();
     if (!inputValidate(input))
       return addChat("computer", "잘못된 값을 입력했습니다.");
     const isStrike = compareAnswer(randomNumber, input);
