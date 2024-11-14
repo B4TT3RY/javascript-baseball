@@ -5,6 +5,11 @@ enum State {
   EndGame = 2,
 }
 
+const START_GAME = "1";
+const END_GAME_BEFORE_START_GAME = "9";
+const END_GAME = "2";
+const THREE_DIGIT_NUMBER = 3;
+
 document.addEventListener("DOMContentLoaded", () => {
   startGame();
 
@@ -55,16 +60,16 @@ const addUserChat = () => {
 
 const handleUserInput = (input: string) => {
   if (state === State.StartGame) {
-    if (input === "1") {
+    if (input === START_GAME) {
       randomNumber = getRandomNumber();
       addAlert("컴퓨터가 숫자를 뽑았습니다.");
       addChat("computer", "세자리 숫자를 입력해주세요.");
       state = State.RunningGame;
-    } else if (input === "9") {
+    } else if (input === END_GAME_BEFORE_START_GAME) {
       endGame();
     }
   } else if (state === State.RunningGame) {
-    if (input === "2") return endGame();
+    if (input === END_GAME) return endGame();
     if (!inputValidate(input))
       return addChat("computer", "잘못된 값을 입력했습니다.");
     const isStrike = compareAnswer(randomNumber, input);
@@ -79,7 +84,7 @@ const handleUserInput = (input: string) => {
 export const getRandomNumber = (): string => {
   const numberSet: Set<number> = new Set();
 
-  while (numberSet.size < 3) {
+  while (numberSet.size < THREE_DIGIT_NUMBER) {
     const randomNumber = Math.floor(Math.random() * 9) + 1;
     numberSet.add(randomNumber);
   }
@@ -90,10 +95,10 @@ export const getRandomNumber = (): string => {
 
 export function inputValidate(input: string) {
   if (isNaN(Number(input))) return false;
-  if (input.length !== 3) return false;
+  if (input.length !== THREE_DIGIT_NUMBER) return false;
 
   const inputSet = new Set(Array.from(input));
-  if (inputSet.size !== 3) return false;
+  if (inputSet.size !== THREE_DIGIT_NUMBER) return false;
 
   return true;
 }
