@@ -7,6 +7,8 @@ enum State {
 
 document.addEventListener("DOMContentLoaded", () => {
   startGame();
+
+  document.querySelector('#sendButton')?.addEventListener('click', () => addUserChat());
 });
 
 let state = State.StartGame;
@@ -36,7 +38,6 @@ const addChat = (sender: SenderType, message: string) => {
   chatBox?.scrollTo(0, chatBox.scrollHeight);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const addUserChat = () => {
   const input = document.querySelector("input");
   if (!input) return;
