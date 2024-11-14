@@ -8,7 +8,9 @@ enum State {
 document.addEventListener("DOMContentLoaded", () => {
   startGame();
 
-  document.querySelector('#sendButton')?.addEventListener('click', () => addUserChat());
+  document
+    .querySelector("#sendButton")
+    ?.addEventListener("click", () => addUserChat());
 });
 
 let state = State.StartGame;
@@ -22,7 +24,7 @@ const addAlert = (message: string) => {
   const chatBox = document.querySelector("div.chatBox");
   chatBox?.append(alert);
   chatBox?.scrollTo(0, chatBox.scrollHeight);
-}
+};
 
 const addChat = (sender: SenderType, message: string) => {
   const chat = document.createElement("p");
@@ -63,7 +65,8 @@ const handleUserInput = (input: string) => {
     }
   } else if (state === State.RunningGame) {
     if (input === "2") return endGame();
-    if (!inputValidate(input)) return addChat("computer", "잘못된 값을 입력했습니다.");
+    if (!inputValidate(input))
+      return addChat("computer", "잘못된 값을 입력했습니다.");
     const isStrike = compareAnswer(randomNumber, input);
     if (isStrike) {
       addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
@@ -83,7 +86,7 @@ export const getRandomNumber = (): string => {
 
   const returnRandomNumber = Array.from(numberSet).join("");
   return returnRandomNumber;
-}
+};
 
 export function inputValidate(input: string) {
   if (isNaN(Number(input))) return false;
@@ -120,7 +123,7 @@ export const getStrike = (randomNumber: string, answer: string): number => {
     .filter((element) => element !== undefined).length;
 
   return strike;
-}
+};
 
 export const getBall = (randomNumber: string, answer: string): number => {
   const ball = Array.from(answer)
@@ -131,7 +134,7 @@ export const getBall = (randomNumber: string, answer: string): number => {
     .filter((element) => element !== undefined).length;
 
   return ball;
-}
+};
 
 const startGame = () => {
   state = State.StartGame;
@@ -139,6 +142,8 @@ const startGame = () => {
 };
 
 const endGame = () => {
-  addAlert("애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요.");
+  addAlert(
+    "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
+  );
   state = State.EndGame;
 };
