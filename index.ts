@@ -72,7 +72,7 @@ const handleUserInput = (input: string) => {
   }
 };
 
-export function getRandomNumber(): string {
+export const getRandomNumber = (): string => {
   const numberSet: Set<number> = new Set();
 
   while (numberSet.size < 3) {
@@ -111,7 +111,7 @@ export const compareAnswer = (randomNumber: string, answer: string) => {
   return strike === 3;
 };
 
-export function getStrike(randomNumber: string, answer: string): number {
+export const getStrike = (randomNumber: string, answer: string): number => {
   const strike = Array.from(randomNumber)
     .map((element, index) => {
       if (answer[index] === element) return element;
@@ -121,7 +121,7 @@ export function getStrike(randomNumber: string, answer: string): number {
   return strike;
 }
 
-export function getBall(randomNumber: string, answer: string): number {
+export const getBall = (randomNumber: string, answer: string): number => {
   const ball = Array.from(answer)
     .map((element, index) => {
       if (randomNumber[index] !== element && randomNumber.includes(element))
