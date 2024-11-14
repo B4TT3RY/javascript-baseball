@@ -1,4 +1,4 @@
-import { compareAnswer, getBall, getRandomNumber, getStrike, inputValidate } from "..";
+import { compareAnswer, getBall, getRandomNumber, getStrike, inputValidate } from "../index.ts";
 
 describe("getRandomNumber()", () => {
   test("세자리인지?", () => {
