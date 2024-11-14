@@ -72,7 +72,7 @@ const handleUserInput = (input: string) => {
   }
 };
 
-function getRandomNumber(): string {
+export function getRandomNumber(): string {
   const numberSet: Set<number> = new Set();
 
   while (numberSet.size < 3) {
@@ -84,7 +84,7 @@ function getRandomNumber(): string {
   return returnRandomNumber;
 }
 
-function inputValidate(input: string) {
+export function inputValidate(input: string) {
   if (isNaN(Number(input))) return false;
   if (input.length !== 3) return false;
 
@@ -94,7 +94,7 @@ function inputValidate(input: string) {
   return true;
 }
 
-const compareAnswer = (randomNumber: string, answer: string) => {
+export const compareAnswer = (randomNumber: string, answer: string) => {
   const strike = getStrike(randomNumber, answer);
   const ball = getBall(randomNumber, answer);
 
@@ -111,7 +111,7 @@ const compareAnswer = (randomNumber: string, answer: string) => {
   return strike === 3;
 };
 
-function getStrike(randomNumber: string, answer: string): number {
+export function getStrike(randomNumber: string, answer: string): number {
   const strike = Array.from(randomNumber)
     .map((element, index) => {
       if (answer[index] === element) return element;
@@ -121,7 +121,7 @@ function getStrike(randomNumber: string, answer: string): number {
   return strike;
 }
 
-function getBall(randomNumber: string, answer: string): number {
+export function getBall(randomNumber: string, answer: string): number {
   const ball = Array.from(answer)
     .map((element, index) => {
       if (randomNumber[index] !== element && randomNumber.includes(element))
