@@ -93,7 +93,7 @@ export const getRandomNumber = (): string => {
   return returnRandomNumber;
 };
 
-export function inputValidate(input: string) {
+export const inputValidate = (input: string) => {
   if (isNaN(Number(input))) return false;
   if (input.length !== THREE_DIGIT_NUMBER) return false;
 
