@@ -79,14 +79,14 @@ const handleUserInput = (input: string) => {
 };
 
 export const getRandomNumber = (): string => {
-  const numberSet: Set<number> = new Set();
+  const numbers: Set<number> = new Set();
 
-  while (numberSet.size < THREE_DIGIT_NUMBER) {
+  while (numbers.size < THREE_DIGIT_NUMBER) {
     const randomNumber = Math.floor(Math.random() * 9) + 1;
-    numberSet.add(randomNumber);
+    numbers.add(randomNumber);
   }
 
-  const returnRandomNumber = Array.from(numberSet).join("");
+  const returnRandomNumber = Array.from(numbers).join("");
   return returnRandomNumber;
 };
 
