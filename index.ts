@@ -1,23 +1,29 @@
-type SenderType = "computer" | "user";
-enum State {
+type SenderType = "computer" | "user"; //컴퓨터, 사람 도메인
+enum State { //진행 상태 도메인
   StartGame = "1",
   RunningGame = "2",
   EndGame = "9",
 }
 
-const THREE_DIGIT_NUMBER = 3;
+const THREE_DIGIT_NUMBER = 3; //입력값 3자리로 제한
 
+//페이지 시작할 때 initializeGame() 호출
 document.addEventListener("DOMContentLoaded", () => {
-  startGame();
+  initializeGame();
 
+  //이벤트 리스너 등록(chat 추가)
   document
     .querySelector("#sendButton")
     ?.addEventListener("click", () => addUserChat());
 });
 
-let state = State.StartGame;
-let randomNumber = "";
+let state = State.StartGame; //시작 상태로 초기화
+let computerNumber: number[] = []; //컴퓨터 랜덤값
 
+
+
+/* ----- 채팅 ----- */
+//✔️알림창 추가
 const addAlert = (message: string) => {
   const alert = document.createElement("p");
   alert.classList.add("alert");
@@ -28,6 +34,7 @@ const addAlert = (message: string) => {
   chatBox?.scrollTo(0, chatBox.scrollHeight);
 };
 
+//✔️채팅 추가
 const addChat = (sender: SenderType, message: string) => {
   const chat = document.createElement("p");
   if (sender === "computer") {
@@ -42,110 +49,123 @@ const addChat = (sender: SenderType, message: string) => {
   chatBox?.scrollTo(0, chatBox.scrollHeight);
 };
 
+//✔️사용자 채팅 추가
 const addUserChat = () => {
-  const input = document.querySelector("input");
-  if (!input) return;
+  const inputElement = document.querySelector("input");
+  if (!inputElement) return;
 
-  const message = input.value.trim();
-  if (message === "") return;
+  const userInput = inputElement.value.trim();
+  if (userInput === "") return;
 
-  addChat("user", message);
-  input.value = "";
+  addChat("user", userInput);
+  inputElement.value = "";
 
-  handleUserInput(message);
+  handleUserInput(userInput);
 };
 
-const handleUserInput = (input: string) => {
-  if (state === State.StartGame) {
-    if (input === State.StartGame) {
-      randomNumber = getRandomNumber();
-      addAlert("컴퓨터가 숫자를 뽑았습니다.");
-      addChat("computer", "세자리 숫자를 입력해주세요.");
-      state = State.RunningGame;
-    } else if (input === State.EndGame) {
-      endGame();
-    }
-  } else if (state === State.RunningGame) {
-    if (input === State.RunningGame) return endGame();
-    if (!inputValidate(input))
-      return addChat("computer", "잘못된 값을 입력했습니다.");
-    const isStrike = compareAnswer(randomNumber, input);
-    if (isStrike) {
-      addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
-      addAlert("게임 종료");
-      startGame();
-    }
-  }
-};
 
-export const getRandomNumber = (): string => {
-  const numbers: Set<number> = new Set();
 
-  while (numbers.size < THREE_DIGIT_NUMBER) {
-    const randomNumber = Math.floor(Math.random() * 9) + 1;
-    numbers.add(randomNumber);
-  }
-
-  const returnRandomNumber = Array.from(numbers).join("");
-  return returnRandomNumber;
-};
-
-export const inputValidate = (input: string) => {
-  if (isNaN(Number(input))) return false;
-  if (input.length !== THREE_DIGIT_NUMBER) return false;
-
-  const inputSet = new Set(Array.from(input));
-  if (inputSet.size !== THREE_DIGIT_NUMBER) return false;
-
-  return true;
-}
-
-export const compareAnswer = (randomNumber: string, answer: string) => {
-  const strike = getStrike(randomNumber, answer);
-  const ball = getBall(randomNumber, answer);
-
-  if (strike === 0 && ball > 0) {
-    addChat("computer", `${ball}볼`);
-  } else if (strike > 0 && ball === 0) {
-    addChat("computer", `${strike}스트라이크`);
-  } else if (strike > 0 && ball > 0) {
-    addChat("computer", `${ball}볼 ${strike}스트라이크`);
-  } else {
-    addChat("computer", "낫싱");
-  }
-
-  return strike === 3;
-};
-
-export const getStrike = (randomNumber: string, answer: string): number => {
-  const strike = Array.from(randomNumber)
-    .map((element, index) => {
-      if (answer[index] === element) return element;
-    })
-    .filter((element) => element !== undefined).length;
-
-  return strike;
-};
-
-export const getBall = (randomNumber: string, answer: string): number => {
-  const ball = Array.from(answer)
-    .map((element, index) => {
-      if (randomNumber[index] !== element && randomNumber.includes(element))
-        return element;
-    })
-    .filter((element) => element !== undefined).length;
-
-  return ball;
-};
-
-const startGame = () => {
+/* ----- 게임 상태 ----- */
+const initializeGame = () => { //게임 초기화
   state = State.StartGame;
   addChat("computer", "게임을 새로 시작하려면 1, 종료하려면 9를 입력하세요.");
 };
 
-const endGame = () => {
+const startGame = (input: string) => { //게임 시작
+  if (input === State.StartGame) { //'1'일 경우
+    computerNumber = generateComputerNumber(THREE_DIGIT_NUMBER);
+    addAlert("컴퓨터가 숫자를 뽑았습니다.");
+    addChat("computer", "세자리 숫자를 입력해주세요.");
+    state = State.RunningGame;
+  } else if (input === State.EndGame) { //'9'일 경우
+    endGame();
+  }
+}
+
+const runningGame = (input: string) => { //게임중
+  if (input === State.RunningGame) { //'2'일 경우
+    return endGame(); 
+  }
+
+  let userNumber = convertUserInput(input);
+  if (userNumber === null) {
+    return addChat("computer", "잘못된 값을 입력했습니다.");
+  }
+    
+  const isWin = compareNumbers(computerNumber, userNumber); //반환값 true;
+  if (isWin) {
+    addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
+    addAlert("게임 종료");
+    initializeGame();
+  }
+}
+
+const endGame = () => { //게임 종료
+  state = State.EndGame;
   addAlert(
     "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
   );
-  state = State.EndGame;
+};
+
+
+
+/* ----- 게임 ----- */
+//✔️게임 흐름 제어
+const handleUserInput = (input: string) => {
+  if (state === State.StartGame) {
+    startGame(input);
+  } else if (state === State.RunningGame) {
+    runningGame(input);
+  }
+};
+
+//✔️랜덤 숫자 생성
+export const generateComputerNumber = (digitNumber: number): number[] => {
+  let shuffledNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  shuffledNumbers.sort(() => Math.random() - 0.5);
+  return shuffledNumbers.splice(0, digitNumber);
+};
+
+//✔️입력값 체크 후 변환한 값 반환
+export const convertUserInput = (input: string): number[] | null => {
+  if(!/^[1-9]+$/.test(input)) { //1~9 사이의 정수인지 체크
+     return null;
+  }
+  if(input.length !== THREE_DIGIT_NUMBER) { //3자리인지 체크
+    return null;
+  }
+  const uniqueEntries = new Set(Array.from(input)); //중복값인지 체크
+  if(uniqueEntries.size !== THREE_DIGIT_NUMBER) {
+    return null;
+  }
+
+  return Array.from(input).map(char => Number(char)); //숫자 배열 리턴
+}
+
+//✔️스트라이크 가져오기
+export const getStrikeCount = (computerNumber: number[], userNumber: number[]): number => {
+  return userNumber.filter((number, index) => computerNumber[index] === number).length;
+};
+
+//✔️볼 가져오기
+export const getBallCount = (computerNumber: number[], userNumber: number[]): number => {
+  return userNumber.filter((number, index) => computerNumber[index] !== number && computerNumber.includes(number)).length;
+};
+
+//✔️값 비교
+export const compareNumbers = (computerNumber: number[], userNumber: number[]) => {
+  const strikeCount = getStrikeCount(computerNumber, userNumber);
+  const ballCount = getBallCount(computerNumber, userNumber);
+
+  if (strikeCount === 0 && ballCount > 0) {
+    addChat("computer", `${ballCount}볼`);
+  } else if (strikeCount > 0 && ballCount === 0) {
+    addChat("computer", `${strikeCount}스트라이크`);
+  } else if (strikeCount > 0 && ballCount > 0) {
+    addChat("computer", `${ballCount}볼 ${strikeCount}스트라이크`);
+  } else {
+    addChat("computer", "낫싱");
+  }
+
+  return strikeCount === 3;
 };
