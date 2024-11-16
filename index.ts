@@ -77,6 +77,7 @@ const addUserChat = () => {
 const initializeGame = () => {
   //게임 초기화
   store.currentState = GameState.StartGame;
+  store.currentRound = 1;
   addChat("computer", "게임을 새로 시작하려면 1, 종료하려면 9를 입력하세요.");
 };
 
@@ -108,7 +109,7 @@ const settingGameRound = (input: string) => {
 
   store.currentState = GameState.RunningGame;
   store.computerNumber = generateComputerNumber(THREE_DIGIT_NUMBER);
-  addAlert("컴퓨터가 숫자를 뽑았습니다." + store.computerNumber);
+  addAlert("컴퓨터가 숫자를 뽑았습니다.");
   addChat("computer", "세자리 숫자를 입력해주세요.");
 };
 
