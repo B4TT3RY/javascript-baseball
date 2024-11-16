@@ -1,11 +1,26 @@
 type SenderType = "computer" | "user"; //컴퓨터, 사람 도메인
-enum State { //진행 상태 도메인
+enum GameState { //진행 상태 도메인
   StartGame = "1",
+  SettingGameRound = "SettingGameRound",
   RunningGame = "2",
   EndGame = "9",
 }
 
+interface GameStateStore {
+  currentState: GameState; // 현재 진행 상태
+  computerNumber: number[]; // 컴퓨터가 뽑은 숫자
+  currentRound: number; // 현재 라운드
+  roundCount: number; // 게임 횟수
+}
+
 const THREE_DIGIT_NUMBER = 3; //입력값 3자리로 제한
+
+const store: GameStateStore = {
+  currentState: GameState.StartGame,
+  computerNumber: [],
+  currentRound: 1,
+  roundCount: 0,
+};
 
 //페이지 시작할 때 initializeGame() 호출
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,9 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     .querySelector("#sendButton")
     ?.addEventListener("click", () => addUserChat());
 });
-
-let state = State.StartGame; //시작 상태로 초기화
-let computerNumber: number[] = []; //컴퓨터 랜덤값
 
 /* ----- 채팅 ----- */
 //✔️알림창 추가
@@ -64,27 +76,45 @@ const addUserChat = () => {
 /* ----- 게임 상태 ----- */
 const initializeGame = () => {
   //게임 초기화
-  state = State.StartGame;
+  store.currentState = GameState.StartGame;
   addChat("computer", "게임을 새로 시작하려면 1, 종료하려면 9를 입력하세요.");
 };
 
 const startGame = (input: string) => {
   //게임 시작
-  if (input === State.StartGame) {
+  if (input === GameState.StartGame) {
     //'1'일 경우
-    computerNumber = generateComputerNumber(THREE_DIGIT_NUMBER);
-    addAlert("컴퓨터가 숫자를 뽑았습니다.");
-    addChat("computer", "세자리 숫자를 입력해주세요.");
-    state = State.RunningGame;
-  } else if (input === State.EndGame) {
+    store.currentState = GameState.SettingGameRound;
+    requestSettingRound();
+  } else if (input === GameState.EndGame) {
     //'9'일 경우
     endGame();
   }
 };
 
+const requestSettingRound = () => {
+  store.currentState = GameState.SettingGameRound;
+  addChat("computer", "게임 라운드 횟수를 설정해주세요.");
+};
+
+const settingGameRound = (input: string) => {
+  if (!/^[1-9]\d*$/.test(input)) {
+    // 정수인지 체크
+    addChat("computer", "잘못된 값을 입력했습니다.");
+    return;
+  }
+  store.roundCount = Number(input);
+  addAlert(`${store.currentRound} / ${store.roundCount} 라운드`);
+
+  store.currentState = GameState.RunningGame;
+  store.computerNumber = generateComputerNumber(THREE_DIGIT_NUMBER);
+  addAlert("컴퓨터가 숫자를 뽑았습니다." + store.computerNumber);
+  addChat("computer", "세자리 숫자를 입력해주세요.");
+};
+
 const runningGame = (input: string) => {
   //게임중
-  if (input === State.RunningGame) {
+  if (input === GameState.RunningGame) {
     //'2'일 경우
     return endGame();
   }
@@ -94,17 +124,25 @@ const runningGame = (input: string) => {
     return addChat("computer", "잘못된 값을 입력했습니다.");
   }
 
-  const isWin = compareNumbers(computerNumber, userNumber); //반환값 true;
+  const isWin = compareNumbers(store.computerNumber, userNumber); //반환값 true;
   if (isWin) {
     addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
-    addAlert("게임 종료");
+    addAlert("사용자 승리");
     initializeGame();
+    return;
   }
+
+  if (store.currentRound >= store.roundCount) {
+    addAlert("컴퓨터 승리");
+    return initializeGame();
+  }
+  store.currentRound += 1;
+  addAlert(`${store.currentRound} / ${store.roundCount} 라운드`);
 };
 
 const endGame = () => {
   //게임 종료
-  state = State.EndGame;
+  store.currentState = GameState.EndGame;
   addAlert(
     "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
   );
@@ -113,9 +151,11 @@ const endGame = () => {
 /* ----- 게임 ----- */
 //✔️게임 흐름 제어
 const handleUserInput = (input: string) => {
-  if (state === State.StartGame) {
+  if (store.currentState === GameState.StartGame) {
     startGame(input);
-  } else if (state === State.RunningGame) {
+  } else if (store.currentState === GameState.SettingGameRound) {
+    settingGameRound(input);
+  } else if (store.currentState === GameState.RunningGame) {
     runningGame(input);
   }
 };
