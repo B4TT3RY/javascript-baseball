@@ -129,8 +129,7 @@ const runningGame = (input: string) => {
   if (isWin) {
     addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
     addAlert("사용자 승리");
-    initializeGame();
-    return;
+    return initializeGame();
   }
 
   if (store.currentRound >= store.roundCount) {
