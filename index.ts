@@ -22,6 +22,7 @@ interface GameStateStore {
 }
 
 const THREE_DIGIT_NUMBER = 3; // 입력값 3자리로 제한
+const SHOW_STATISTICS = '3';
 
 const store: GameStateStore = {
   currentState: GameState.StartGame,
@@ -29,10 +30,6 @@ const store: GameStateStore = {
   currentRound: 1,
   roundCount: 0,
   statistics: [],
-};
-
-const saveStatistics = (winner: Player) => {
-  
 };
 
 //페이지 시작할 때 initializeGame() 호출
@@ -103,6 +100,8 @@ const startGame = (input: string) => {
   } else if (input === GameState.EndGame) {
     //'9'일 경우
     endGame();
+  } else if(input === SHOW_STATISTICS) {
+    console.log(store.statistics);
   }
 };
 
@@ -142,15 +141,25 @@ const runningGame = (input: string) => {
   if (isWin) {
     addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
     addAlert("사용자 승리");
+    saveStatistics("user");
     return initializeGame();
   }
 
   if (store.currentRound >= store.roundCount) {
-    addAlert("컴퓨터 승리");
+    addAlert(`컴퓨터 승리\n정답은 ${store.computerNumber.join('')} 이었습니다.`);
+    saveStatistics("computer");
     return initializeGame();
   }
   store.currentRound += 1;
   addAlert(`${store.currentRound} / ${store.roundCount} 라운드`);
+};
+
+const saveStatistics = (winner: Player) => {
+  store.statistics.push({
+    roundCount: store.roundCount,
+    tryCount: store.currentRound,
+    winner
+  });
 };
 
 const endGame = () => {
