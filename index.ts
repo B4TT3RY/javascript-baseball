@@ -4,21 +4,22 @@ enum GameState { // 진행 상태 도메인
   SettingGameRound = "SettingGameRound",
   RunningGame = "2",
   EndGame = "9",
-};
+}
 
-interface GameStatistic { // 게임 통계 기록
-  roundCount : number;
-  tryCount : number;
-  winner : Player;
-};
+interface GameStatistic {
+  // 게임 통계 기록
+  roundCount: number;
+  tryCount: number;
+  winner: Player;
+}
 
 interface GameStateStore {
   currentState: GameState; // 현재 진행 상태
   computerNumber: number[]; // 컴퓨터가 뽑은 숫자
   currentRound: number; // 현재 라운드
   roundCount: number; // 게임 횟수
-  statistics : GameStatistic[]; // 게임 통계
-};
+  statistics: GameStatistic[]; // 게임 통계
+}
 
 const THREE_DIGIT_NUMBER = 3; // 입력값 3자리로 제한
 
@@ -27,10 +28,10 @@ const store: GameStateStore = {
   computerNumber: [],
   currentRound: 1,
   roundCount: 0,
-  statistics : []
+  statistics: [],
 };
 
-const saveStatistics = (winner : Player) => {
+const saveStatistics = (winner: Player) => {
   
 };
 
