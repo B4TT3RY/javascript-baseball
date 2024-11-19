@@ -3,3 +3,4 @@ node_modules
 coverage
 browser.js
 index.js
+types.js

@@ -1,28 +1,7 @@
-type Player = "computer" | "user"; // 컴퓨터, 사람 도메인
-enum GameState { // 진행 상태 도메인
-  StartGame = "1",
-  SettingGameRound = "SettingGameRound",
-  RunningGame = "2",
-  EndGame = "9",
-}
-
-interface GameStatistic {
-  // 게임 통계 기록
-  roundCount: number;
-  tryCount: number;
-  winner: Player;
-}
-
-interface GameStateStore {
-  currentState: GameState; // 현재 진행 상태
-  computerNumber: number[]; // 컴퓨터가 뽑은 숫자
-  currentRound: number; // 현재 라운드
-  roundCount: number; // 게임 횟수
-  statistics: GameStatistic[]; // 게임 통계
-}
+import { GameState, GameStateStore, Player } from "./types";
 
 const THREE_DIGIT_NUMBER = 3; // 입력값 3자리로 제한
-const SHOW_STATISTICS = '3';
+const SHOW_STATISTICS = "3";
 
 const store: GameStateStore = {
   currentState: GameState.StartGame,
@@ -49,6 +28,13 @@ const addAlert = (message: string) => {
   alert.classList.add("alert");
   alert.innerText = message;
 
+  if (store.currentState === GameState.RunningGame) {
+    store.statistics.at(-1)?.gameLog.push({
+      sender: "alert",
+      message,
+    });
+  }
+
   const chatBox = document.querySelector("div.chatBox");
   chatBox?.append(alert);
   chatBox?.scrollTo(0, chatBox.scrollHeight);
@@ -63,6 +49,13 @@ const addChat = (sender: Player, message: string) => {
     chat.classList.add("userChat");
   }
   chat.innerText = message;
+
+  if (store.currentState === GameState.RunningGame) {
+    store.statistics.at(-1)?.gameLog.push({
+      sender,
+      message,
+    });
+  }
 
   const chatBox = document.querySelector("div.chatBox");
   chatBox?.append(chat);
@@ -88,7 +81,10 @@ const initializeGame = () => {
   //게임 초기화
   store.currentState = GameState.StartGame;
   store.currentRound = 1;
-  addChat("computer", "게임을 새로 시작하려면 1, 종료하려면 9를 입력하세요.");
+  addChat(
+    "computer",
+    "게임을 새로 시작하려면 1, 기록을 보려면 2, 통계를 보려면 3, 종료하려면 9을 입력하세요."
+  );
 };
 
 const startGame = (input: string) => {
@@ -100,7 +96,7 @@ const startGame = (input: string) => {
   } else if (input === GameState.EndGame) {
     //'9'일 경우
     endGame();
-  } else if(input === SHOW_STATISTICS) {
+  } else if (input === SHOW_STATISTICS) {
     console.log(store.statistics);
   }
 };
@@ -117,6 +113,14 @@ const settingGameRound = (input: string) => {
     return;
   }
   store.roundCount = Number(input);
+
+  store.statistics.push({
+    id: store.statistics.length + 1,
+    startTime: new Date(),
+    roundCount: store.roundCount,
+    gameLog: [],
+  });
+
   addAlert(`${store.currentRound} / ${store.roundCount} 라운드`);
 
   store.currentState = GameState.RunningGame;
@@ -141,25 +145,31 @@ const runningGame = (input: string) => {
   if (isWin) {
     addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
     addAlert("사용자 승리");
-    saveStatistics("user");
+    finalizeStatistics("user");
     return initializeGame();
   }
 
   if (store.currentRound >= store.roundCount) {
-    addAlert(`컴퓨터 승리\n정답은 ${store.computerNumber.join('')} 이었습니다.`);
-    saveStatistics("computer");
+    addAlert(
+      `컴퓨터 승리\n정답은 ${store.computerNumber.join("")} 이었습니다.`
+    );
+    finalizeStatistics("computer");
     return initializeGame();
   }
   store.currentRound += 1;
   addAlert(`${store.currentRound} / ${store.roundCount} 라운드`);
 };
 
-const saveStatistics = (winner: Player) => {
-  store.statistics.push({
-    roundCount: store.roundCount,
+const finalizeStatistics = (winner: Player) => {
+  let lastElement = store.statistics.at(-1);
+  if (!lastElement) return;
+  lastElement = {
+    ...lastElement,
+    endTime: new Date(),
     tryCount: store.currentRound,
-    winner
-  });
+    winner,
+  };
+  store.statistics[store.statistics.length - 1] = lastElement;
 };
 
 const endGame = () => {
