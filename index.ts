@@ -1,45 +1,7 @@
-type Player = "computer" | "user" | "alert"; // 컴퓨터, 사람 도메인
-enum GameState { // 진행 상태 도메인
-  StartGame = "1",
-  SettingGameRound = "SettingGameRound",
-  RunningGame = "2",
-  EndGame = "9",
-}
-
-interface GameStatistic {
-  // 게임 통계 기록
-  id: number;
-  startTime: Date;
-  endTime?: Date;
-  roundCount: number;
-  tryCount?: number;
-  winner?: Player;
-  gameLog: GameLog[];
-}
-
-interface GameLog {
-  sender: Player;
-  message: string;
-}
-
-interface GameStateStore {
-  currentState: GameState; // 현재 진행 상태
-  computerNumber: number[]; // 컴퓨터가 뽑은 숫자
-  currentRound: number; // 현재 라운드
-  roundCount: number; // 게임 횟수
-  statistics: GameStatistic[]; // 게임 통계
-}
-
-const THREE_DIGIT_NUMBER = 3; // 입력값 3자리로 제한
-const SHOW_STATISTICS = "3";
-
-const store: GameStateStore = {
-  currentState: GameState.StartGame,
-  computerNumber: [],
-  currentRound: 1,
-  roundCount: 0,
-  statistics: [],
-};
+import { addUserChat, addChat, addAlert } from "./chat.js";
+import { SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
+import { store } from "./store.js";
+import { GameState, Player, GameStatistic } from "./types.js";
 
 //페이지 시작할 때 initializeGame() 호출
 document.addEventListener("DOMContentLoaded", () => {
@@ -50,61 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     .querySelector("#sendButton")
     ?.addEventListener("click", () => addUserChat());
 });
-
-/* ----- 채팅 ----- */
-//✔️알림창 추가
-const addAlert = (message: string) => {
-  const alert = document.createElement("p");
-  alert.classList.add("alert");
-  alert.innerText = message;
-
-  if (store.currentState === GameState.RunningGame) {
-    store.statistics.at(-1)?.gameLog.push({
-      sender: "alert",
-      message,
-    });
-  }
-
-  const chatBox = document.querySelector("div.chatBox");
-  chatBox?.append(alert);
-  chatBox?.scrollTo(0, chatBox.scrollHeight);
-};
-
-//✔️채팅 추가
-const addChat = (sender: Player, message: string) => {
-  const chat = document.createElement("p");
-  if (sender === "computer") {
-    chat.classList.add("computerChat");
-  } else {
-    chat.classList.add("userChat");
-  }
-  chat.innerText = message;
-
-  if (store.currentState === GameState.RunningGame) {
-    store.statistics.at(-1)?.gameLog.push({
-      sender,
-      message,
-    });
-  }
-
-  const chatBox = document.querySelector("div.chatBox");
-  chatBox?.append(chat);
-  chatBox?.scrollTo(0, chatBox.scrollHeight);
-};
-
-//✔️사용자 채팅 추가
-const addUserChat = () => {
-  const inputElement = document.querySelector("input");
-  if (!inputElement) return;
-
-  const userInput = inputElement.value.trim();
-  if (userInput === "") return;
-
-  addChat("user", userInput);
-  inputElement.value = "";
-
-  handleUserInput(userInput);
-};
 
 /* ----- 게임 상태 ----- */
 const initializeGame = () => {
@@ -273,7 +180,7 @@ const endGame = () => {
 
 /* ----- 게임 ----- */
 //✔️게임 흐름 제어
-const handleUserInput = (input: string) => {
+export const handleUserInput = (input: string) => {
   if (store.currentState === GameState.StartGame) {
     startGame(input);
   } else if (store.currentState === GameState.SettingGameRound) {
