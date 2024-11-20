@@ -44,60 +44,72 @@ const startGame = (input: string) => {
 
 const showStatistics = () => {
   const arr = Array.from(store.statistics);
-  arr.sort((a, b) => (a.tryCount??0) - (b.tryCount??0));
+  arr.sort((a, b) => (a.tryCount ?? 0) - (b.tryCount ?? 0));
   const minTryCount = arr[0];
-  const maxTryCount = arr[arr.length-1];
+  const maxTryCount = arr[arr.length - 1];
 
   arr.sort((a, b) => a.roundCount - b.roundCount);
   const minRoundCount = arr[0];
-  const maxRoundCount = arr[arr.length-1];
-
-
+  const maxRoundCount = arr[arr.length - 1];
 
   const sumRoundCount = store.statistics.reduce((acc, cur) => {
     return acc + cur.roundCount;
   }, 0);
 
   const sumTryCount = store.statistics.reduce((acc, cur) => {
-    return acc + (cur.tryCount??0);
+    return acc + (cur.tryCount ?? 0);
   }, 0);
-  
 
   const maxFre = calculateFrequency(store.statistics);
 
-
-  const winComputer = arr.filter((e) => e.winner === 'computer');
+  const winComputer = arr.filter((e) => e.winner === "computer");
   const computerFre = calculateFrequency(winComputer);
-  const winUser = arr.filter((e) => e.winner === 'user');
+  const winUser = arr.filter((e) => e.winner === "user");
   const userFre = calculateFrequency(winUser);
 
-
-
-  console.log(`가장 적은 횟수 : ${minTryCount.tryCount} - [${minTryCount.id}]`); //가장 적은 횟수 
+  console.log(`가장 적은 횟수 : ${minTryCount.tryCount} - [${minTryCount.id}]`); //가장 적은 횟수
   console.log(`가장 많은 횟수 : ${maxTryCount.tryCount} - [${maxTryCount.id}]`); //가장 많은 횟수
   console.log(`가장 많이 적용된 라운드 횟수 : ${maxFre[0]} - [${maxFre[1]}]`); //가장 많이 적용된 라운드 횟수
-  console.log(`가장 큰 값으로 적용된 라운드 횟수 : ${maxRoundCount.roundCount} - [${maxRoundCount.id}]`); //가장 큰 값으로 적용된 라운드 횟수
-  console.log(`가장 작은 값으로 적용된 라운드 횟수 : ${minRoundCount.roundCount} - [${minRoundCount.id}]`); //가장 적은 값으로 적용된 라운드 횟수
-  console.log(`적용된 라운드 횟수 평균 : ${sumRoundCount/store.statistics.length}`) //적용된 라운드 횟수 평균(총 라운드 횟수 / 게임 진행 횟수)
-  console.log(`평균 라운드 횟수 평균 : ${(sumTryCount/store.statistics.length).toFixed(2)}`) //평균 라운드 횟수(유저 입력 횟수 / 게임 진행 횟수)
-  console.log(`컴퓨터가 가장 많이 승리한 라운드 횟수 : ${computerFre[0]} - [${computerFre[1]}]`); //컴퓨터가 가장 많이 승리한 라운드 횟수
-  console.log(`사용자가 가장 많이 승리한 라운드 횟수 : ${userFre[0]} - [${userFre[1]}]`) //사용자가 가장 많이 승리한 라운드 횟수
-}
+  console.log(
+    `가장 큰 값으로 적용된 라운드 횟수 : ${maxRoundCount.roundCount} - [${maxRoundCount.id}]`
+  ); //가장 큰 값으로 적용된 라운드 횟수
+  console.log(
+    `가장 작은 값으로 적용된 라운드 횟수 : ${minRoundCount.roundCount} - [${minRoundCount.id}]`
+  ); //가장 적은 값으로 적용된 라운드 횟수
+  console.log(
+    `적용된 라운드 횟수 평균 : ${sumRoundCount / store.statistics.length}`
+  ); //적용된 라운드 횟수 평균(총 라운드 횟수 / 게임 진행 횟수)
+  console.log(
+    `평균 라운드 횟수 평균 : ${(sumTryCount / store.statistics.length).toFixed(
+      2
+    )}`
+  ); //평균 라운드 횟수(유저 입력 횟수 / 게임 진행 횟수)
+  console.log(
+    `컴퓨터가 가장 많이 승리한 라운드 횟수 : ${computerFre[0]} - [${computerFre[1]}]`
+  ); //컴퓨터가 가장 많이 승리한 라운드 횟수
+  console.log(
+    `사용자가 가장 많이 승리한 라운드 횟수 : ${userFre[0]} - [${userFre[1]}]`
+  ); //사용자가 가장 많이 승리한 라운드 횟수
+};
 
 const calculateFrequency = (arr: GameStatistic[]) => {
   const frequency = new Map<number, number>(); //키: 라운드, 값: 등장 횟수 => 높은 값 갖고 있는 키 리턴
-  
+
   arr.map((e) => {
-    frequency.set(e.roundCount, (frequency.get(e.roundCount) ?? 0)+1); 
+    frequency.set(e.roundCount, (frequency.get(e.roundCount) ?? 0) + 1);
   });
 
-  const maxFre =  Math.max(...frequency.values());
-  const findKey = Array.from(frequency.keys()).filter(e => frequency.get(e) === maxFre);
-  
-  const findMaxFre = arr.filter(e => findKey.includes(e.roundCount)).map(e => e.id);
+  const maxFre = Math.max(...frequency.values());
+  const findKey = Array.from(frequency.keys()).filter(
+    (e) => frequency.get(e) === maxFre
+  );
+
+  const findMaxFre = arr
+    .filter((e) => findKey.includes(e.roundCount))
+    .map((e) => e.id);
 
   return [findKey, findMaxFre];
-}
+};
 
 const requestSettingRound = () => {
   store.currentState = GameState.SettingGameRound;
