@@ -3,6 +3,7 @@ import { SHOW_LOG, SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
 import { handleShowLog, showLog } from "./log.js";
 import { store } from "./store.js";
 import { GameState, Player, GameStatistic } from "./types.js";
+import { generateComputerNumber, getBallCount, getStrikeCount } from "./util.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGame();
@@ -192,12 +193,6 @@ export const handleUserInput = (input: string) => {
   }
 };
 
-export const generateComputerNumber = (digitNumber: number): number[] => {
-  const shuffledNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  shuffledNumbers.sort(() => Math.random() - 0.5);
-  return shuffledNumbers.splice(0, digitNumber);
-};
-
 export const convertUserInput = (input: string): number[] | null => {
   if (!/^[1-9]+$/.test(input)) {
     return null;
@@ -211,24 +206,6 @@ export const convertUserInput = (input: string): number[] | null => {
   }
 
   return Array.from(input).map((char) => Number(char));
-};
-
-export const getStrikeCount = (
-  computerNumber: number[],
-  userNumber: number[]
-): number => {
-  return userNumber.filter((number, index) => computerNumber[index] === number)
-    .length;
-};
-
-export const getBallCount = (
-  computerNumber: number[],
-  userNumber: number[]
-): number => {
-  return userNumber.filter(
-    (number, index) =>
-      computerNumber[index] !== number && computerNumber.includes(number)
-  ).length;
 };
 
 export const compareNumbers = (
