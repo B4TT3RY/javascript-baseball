@@ -4,19 +4,15 @@ import { showIdLog, showLog } from "./log.js";
 import { store } from "./store.js";
 import { GameState, Player, GameStatistic } from "./types.js";
 
-//페이지 시작할 때 initializeGame() 호출
 document.addEventListener("DOMContentLoaded", () => {
   initializeGame();
 
-  //이벤트 리스너 등록(chat 추가)
   document
     .querySelector("#sendButton")
     ?.addEventListener("click", () => addUserChat());
 });
 
-/* ----- 게임 상태 ----- */
 export const initializeGame = () => {
-  //게임 초기화
   store.currentState = GameState.StartGame;
   store.currentRound = 1;
   addChat(
@@ -26,13 +22,10 @@ export const initializeGame = () => {
 };
 
 const startGame = (input: string) => {
-  //게임 시작
   if (input === GameState.StartGame) {
-    //'1'일 경우
     store.currentState = GameState.SettingGameRound;
     requestSettingRound();
   } else if (input === GameState.EndGame) {
-    //'9'일 경우
     endGame();
   } else if (input === SHOW_LOG) {
     showLog();
@@ -48,6 +41,7 @@ const showStatistics = () => {
   }
 
   const arr = Array.from(store.statistics);
+
   arr.sort((a, b) => (a.tryCount ?? 0) - (b.tryCount ?? 0));
   const minTryCount = arr[0];
   const maxTryCount = arr[arr.length - 1];
@@ -93,7 +87,7 @@ const showStatistics = () => {
 };
 
 const calculateFrequency = (arr: GameStatistic[]) => {
-  const frequency = new Map<number, number>(); //키: 라운드, 값: 등장 횟수 => 높은 값 갖고 있는 키 리턴
+  const frequency = new Map<number, number>();
 
   arr.map((e) => {
     frequency.set(e.roundCount, (frequency.get(e.roundCount) ?? 0) + 1);
@@ -118,7 +112,6 @@ const requestSettingRound = () => {
 
 const settingGameRound = (input: string) => {
   if (!/^[1-9]\d*$/.test(input)) {
-    // 정수인지 체크
     addChat("computer", "잘못된 값을 입력했습니다.");
     return;
   }
@@ -140,9 +133,7 @@ const settingGameRound = (input: string) => {
 };
 
 const runningGame = (input: string) => {
-  //게임중
   if (input === GameState.RunningGame) {
-    //'2'일 경우
     return endGame();
   }
 
@@ -151,7 +142,7 @@ const runningGame = (input: string) => {
     return addChat("computer", "잘못된 값을 입력했습니다.");
   }
 
-  const isWin = compareNumbers(store.computerNumber, userNumber); //반환값 true;
+  const isWin = compareNumbers(store.computerNumber, userNumber);
   if (isWin) {
     addChat("computer", "3개의 숫자를 모두 맞히셨습니다.");
     addAlert("사용자 승리");
@@ -183,15 +174,12 @@ const finalizeStatistics = (winner: Player) => {
 };
 
 const endGame = () => {
-  //게임 종료
   store.currentState = GameState.EndGame;
   addAlert(
     "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
   );
 };
 
-/* ----- 게임 ----- */
-//✔️게임 흐름 제어
 export const handleUserInput = (input: string) => {
   if (store.currentState === GameState.StartGame) {
     startGame(input);
@@ -204,29 +192,25 @@ export const handleUserInput = (input: string) => {
   }
 };
 
-//✔️랜덤 숫자 생성
 export const generateComputerNumber = (digitNumber: number): number[] => {
   const shuffledNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   shuffledNumbers.sort(() => Math.random() - 0.5);
   return shuffledNumbers.splice(0, digitNumber);
 };
 
-//✔️입력값 체크 후 변환한 값 반환
 export const convertUserInput = (input: string): number[] | null => {
   if (!/^[1-9]+$/.test(input)) {
-    //1~9 사이의 정수인지 체크
     return null;
   }
   if (input.length !== THREE_DIGIT_NUMBER) {
-    //3자리인지 체크
     return null;
   }
-  const uniqueEntries = new Set(Array.from(input)); //중복값인지 체크
+  const uniqueEntries = new Set(Array.from(input));
   if (uniqueEntries.size !== THREE_DIGIT_NUMBER) {
     return null;
   }
 
-  return Array.from(input).map((char) => Number(char)); //숫자 배열 리턴
+  return Array.from(input).map((char) => Number(char));
 };
 
 //✔️스트라이크 가져오기

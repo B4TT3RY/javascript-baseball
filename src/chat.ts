@@ -2,7 +2,6 @@ import { handleUserInput } from "./index.js";
 import { store } from "./store.js";
 import { GameState, Player } from "./types.js";
 
-//✔️알림창 추가
 export const addAlert = (message: string) => {
   const alert = document.createElement("p");
   alert.classList.add("alert");
@@ -20,7 +19,6 @@ export const addAlert = (message: string) => {
   chatBox?.scrollTo(0, chatBox.scrollHeight);
 };
 
-//✔️채팅 추가
 export const addChat = (sender: Player, message: string) => {
   const chat = document.createElement("p");
   if (sender === "computer") {
@@ -42,7 +40,6 @@ export const addChat = (sender: Player, message: string) => {
   chatBox?.scrollTo(0, chatBox.scrollHeight);
 };
 
-//✔️사용자 채팅 추가
 export const addUserChat = () => {
   const inputElement = document.querySelector("input");
   if (!inputElement) return;

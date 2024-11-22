@@ -1,5 +1,5 @@
-export type Player = "computer" | "user" | "alert"; // 컴퓨터, 사람 도메인
-export enum GameState { // 진행 상태 도메인
+export type Player = "computer" | "user" | "alert";
+export enum GameState {
   StartGame = "1",
   SettingGameRound = "SettingGameRound",
   ShowLog = "ShowLog",
@@ -8,7 +8,6 @@ export enum GameState { // 진행 상태 도메인
 }
 
 export interface GameStatistic {
-  // 게임 통계 기록
   id: number;
   startTime: Date;
   endTime?: Date;
@@ -24,9 +23,9 @@ export interface GameLog {
 }
 
 export interface GameStateStore {
-  currentState: GameState; // 현재 진행 상태
-  computerNumber: number[]; // 컴퓨터가 뽑은 숫자
-  currentRound: number; // 현재 라운드
-  roundCount: number; // 게임 횟수
-  statistics: GameStatistic[]; // 게임 통계
+  currentState: GameState;
+  computerNumber: number[];
+  currentRound: number;
+  roundCount: number;
+  statistics: GameStatistic[];
 }
