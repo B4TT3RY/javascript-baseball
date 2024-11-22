@@ -30,7 +30,7 @@ export const showLog = () => {
   });
 };
 
-export const showIdLog = (id: string) => {
+export const handleShowLog = (id: string) => {
   // id validation
   const statistics = store.statistics.find((stat) => stat.id === parseInt(id));
 

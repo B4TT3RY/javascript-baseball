@@ -1,6 +1,6 @@
 import { addUserChat, addChat, addAlert } from "./chat.js";
 import { SHOW_LOG, SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
-import { showIdLog, showLog } from "./log.js";
+import { handleShowLog, showLog } from "./log.js";
 import { store } from "./store.js";
 import { GameState, Player, GameStatistic } from "./types.js";
 
@@ -21,7 +21,7 @@ export const initializeGame = () => {
   );
 };
 
-const startGame = (input: string) => {
+const handleStartGame = (input: string) => {
   if (input === GameState.StartGame) {
     store.currentState = GameState.SettingGameRound;
     requestSettingRound();
@@ -110,7 +110,7 @@ const requestSettingRound = () => {
   addChat("computer", "게임 라운드 횟수를 설정해주세요.");
 };
 
-const settingGameRound = (input: string) => {
+const handleSettingGameRound = (input: string) => {
   if (!/^[1-9]\d*$/.test(input)) {
     addChat("computer", "잘못된 값을 입력했습니다.");
     return;
@@ -132,7 +132,7 @@ const settingGameRound = (input: string) => {
   addChat("computer", "세자리 숫자를 입력해주세요.");
 };
 
-const runningGame = (input: string) => {
+const handleRunningGame = (input: string) => {
   if (input === GameState.RunningGame) {
     return endGame();
   }
@@ -182,13 +182,13 @@ const endGame = () => {
 
 export const handleUserInput = (input: string) => {
   if (store.currentState === GameState.StartGame) {
-    startGame(input);
+    handleStartGame(input);
   } else if (store.currentState === GameState.SettingGameRound) {
-    settingGameRound(input);
+    handleSettingGameRound(input);
   } else if (store.currentState === GameState.RunningGame) {
-    runningGame(input);
+    handleRunningGame(input);
   } else if (store.currentState === GameState.ShowLog) {
-    showIdLog(input);
+    handleShowLog(input);
   }
 };
 
