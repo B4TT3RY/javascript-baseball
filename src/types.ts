@@ -2,6 +2,7 @@ export type Player = "computer" | "user" | "alert"; // 컴퓨터, 사람 도메�
 export enum GameState { // 진행 상태 도메인
   StartGame = "1",
   SettingGameRound = "SettingGameRound",
+  ShowLog = "ShowLog",
   RunningGame = "2",
   EndGame = "9",
 }

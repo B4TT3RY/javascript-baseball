@@ -1,5 +1,6 @@
 import { addUserChat, addChat, addAlert } from "./chat.js";
-import { SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
+import { SHOW_LOG, SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
+import { showIdLog, showLog } from "./log.js";
 import { store } from "./store.js";
 import { GameState, Player, GameStatistic } from "./types.js";
 
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ----- 게임 상태 ----- */
-const initializeGame = () => {
+export const initializeGame = () => {
   //게임 초기화
   store.currentState = GameState.StartGame;
   store.currentRound = 1;
@@ -33,16 +34,19 @@ const startGame = (input: string) => {
   } else if (input === GameState.EndGame) {
     //'9'일 경우
     endGame();
+  } else if (input === SHOW_LOG) {
+    showLog();
   } else if (input === SHOW_STATISTICS) {
-    console.log(store.statistics);
-
-    console.log("---------------------------");
-
     showStatistics();
   }
 };
 
 const showStatistics = () => {
+  if (store.statistics.length === 0) {
+    addChat("computer", "표시할 통계가 없습니다.");
+    return;
+  }
+
   const arr = Array.from(store.statistics);
   arr.sort((a, b) => (a.tryCount ?? 0) - (b.tryCount ?? 0));
   const minTryCount = arr[0];
@@ -67,29 +71,25 @@ const showStatistics = () => {
   const winUser = arr.filter((e) => e.winner === "user");
   const userFre = calculateFrequency(winUser);
 
-  console.log(`가장 적은 횟수 : ${minTryCount.tryCount} - [${minTryCount.id}]`); //가장 적은 횟수
-  console.log(`가장 많은 횟수 : ${maxTryCount.tryCount} - [${maxTryCount.id}]`); //가장 많은 횟수
-  console.log(`가장 많이 적용된 라운드 횟수 : ${maxFre[0]} - [${maxFre[1]}]`); //가장 많이 적용된 라운드 횟수
-  console.log(
-    `가장 큰 값으로 적용된 라운드 횟수 : ${maxRoundCount.roundCount} - [${maxRoundCount.id}]`
-  ); //가장 큰 값으로 적용된 라운드 횟수
-  console.log(
-    `가장 작은 값으로 적용된 라운드 횟수 : ${minRoundCount.roundCount} - [${minRoundCount.id}]`
-  ); //가장 적은 값으로 적용된 라운드 횟수
-  console.log(
-    `적용된 라운드 횟수 평균 : ${sumRoundCount / store.statistics.length}`
-  ); //적용된 라운드 횟수 평균(총 라운드 횟수 / 게임 진행 횟수)
-  console.log(
-    `평균 라운드 횟수 평균 : ${(sumTryCount / store.statistics.length).toFixed(
-      2
-    )}`
-  ); //평균 라운드 횟수(유저 입력 횟수 / 게임 진행 횟수)
-  console.log(
-    `컴퓨터가 가장 많이 승리한 라운드 횟수 : ${computerFre[0]} - [${computerFre[1]}]`
-  ); //컴퓨터가 가장 많이 승리한 라운드 횟수
-  console.log(
-    `사용자가 가장 많이 승리한 라운드 횟수 : ${userFre[0]} - [${userFre[1]}]`
-  ); //사용자가 가장 많이 승리한 라운드 횟수
+  let message = `가장 적은 횟수 : ${minTryCount.tryCount} - [${minTryCount.id}]\n`;
+  message += `가장 많은 횟수 : ${maxTryCount.tryCount} - [${maxTryCount.id}]\n`;
+  message += `가장 많이 적용된 라운드 횟수 : ${maxFre[0]} - [${maxFre[1]}]\n`;
+  message += `가장 큰 값으로 적용된 라운드 횟수 : ${maxRoundCount.roundCount} - [${maxRoundCount.id}]\n`;
+  message += `가장 작은 값으로 적용된 라운드 횟수 : ${minRoundCount.roundCount} - [${minRoundCount.id}]\n`;
+  message += `적용된 라운드 횟수 평균 : ${
+    sumRoundCount / store.statistics.length
+  }\n`;
+  message += `평균 라운드 횟수 평균 : ${(
+    sumTryCount / store.statistics.length
+  ).toFixed(2)}\n`;
+  message += `컴퓨터가 가장 많이 승리한 라운드 횟수 : ${
+    computerFre[0].join(", ") || 0
+  }\n`;
+  message += `사용자가 가장 많이 승리한 라운드 횟수 : ${
+    userFre[0].join(", ") || 0
+  }`;
+
+  addAlert(message);
 };
 
 const calculateFrequency = (arr: GameStatistic[]) => {
@@ -199,6 +199,8 @@ export const handleUserInput = (input: string) => {
     settingGameRound(input);
   } else if (store.currentState === GameState.RunningGame) {
     runningGame(input);
+  } else if (store.currentState === GameState.ShowLog) {
+    showIdLog(input);
   }
 };
 
