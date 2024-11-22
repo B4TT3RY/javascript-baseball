@@ -3,7 +3,11 @@ import { SHOW_LOG, SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
 import { handleShowLog, showLog } from "./log.js";
 import { store } from "./store.js";
 import { GameState, Player, GameStatistic } from "./types.js";
-import { generateComputerNumber, getBallCount, getStrikeCount } from "./util.js";
+import {
+  generateComputerNumber,
+  getBallCount,
+  getStrikeCount,
+} from "./util.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGame();
@@ -51,13 +55,15 @@ const showStatistics = () => {
   const minRoundCount = arr[0];
   const maxRoundCount = arr[arr.length - 1];
 
-  const sumRoundCount = store.statistics.reduce((acc, cur) => {
-    return acc + cur.roundCount;
-  }, 0);
+  const sumRoundCount = store.statistics.reduce(
+    (acc, cur) => acc + cur.roundCount,
+    0
+  );
 
-  const sumTryCount = store.statistics.reduce((acc, cur) => {
-    return acc + (cur.tryCount ?? 0);
-  }, 0);
+  const sumTryCount = store.statistics.reduce(
+    (acc, cur) => acc + (cur.tryCount ?? 0),
+    0
+  );
 
   const maxFre = calculateFrequency(store.statistics);
 
@@ -152,9 +158,7 @@ const handleRunningGame = (input: string) => {
   }
 
   if (store.currentRound >= store.roundCount) {
-    addAlert(
-      `컴퓨터 승리\n정답은 ${store.computerNumber.join("")} 이었습니다.`
-    );
+    addAlert(`컴퓨터 승리\n정답은 ${store.computerNumber.join("")} 이었습니다.`);
     finalizeStatistics("computer");
     return initializeGame();
   }
@@ -179,6 +183,10 @@ const endGame = () => {
   addAlert(
     "애플리케이션이 종료되었습니다.\n게임을 시작하시려면 새로고침 해주세요."
   );
+};
+
+export const showNonExistsGame = () => {
+  addChat("computer", "존재하지 않는 게임입니다.");
 };
 
 export const handleUserInput = (input: string) => {
