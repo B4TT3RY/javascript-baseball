@@ -213,7 +213,6 @@ export const convertUserInput = (input: string): number[] | null => {
   return Array.from(input).map((char) => Number(char));
 };
 
-//✔️스트라이크 가져오기
 export const getStrikeCount = (
   computerNumber: number[],
   userNumber: number[]
@@ -222,7 +221,6 @@ export const getStrikeCount = (
     .length;
 };
 
-//✔️볼 가져오기
 export const getBallCount = (
   computerNumber: number[],
   userNumber: number[]
@@ -233,7 +231,6 @@ export const getBallCount = (
   ).length;
 };
 
-//✔️값 비교
 export const compareNumbers = (
   computerNumber: number[],
   userNumber: number[]
