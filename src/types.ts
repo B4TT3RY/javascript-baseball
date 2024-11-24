@@ -1,4 +1,4 @@
-export type BallNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+export type BallNumbers = (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
 
 export type Player = "computer" | "user" | "alert";
 
@@ -27,7 +27,7 @@ export interface GameLog {
 
 export interface GameStateStore {
   currentState: GameState;
-  computerNumber: number[];
+  computerNumber: BallNumbers;
   currentRound: number;
   roundCount: number;
   statistics: GameStatistic[];

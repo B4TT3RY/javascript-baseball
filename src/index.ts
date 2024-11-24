@@ -2,7 +2,7 @@ import { addUserChat, addChat, addAlert } from "./chat.js";
 import { SHOW_LOG, SHOW_STATISTICS, THREE_DIGIT_NUMBER } from "./const.js";
 import { handleShowLog, showLog } from "./log.js";
 import { store } from "./store.js";
-import { GameState } from "./types.js";
+import { GameState, BallNumbers } from "./types.js";
 import { showStatistics, finalizeStatistics } from "./statistics.js";
 import {
   generateComputerNumber,
@@ -124,7 +124,7 @@ export const handleUserInput = (input: string) => {
   }
 };
 
-export const convertUserInput = (input: string): number[] | null => {
+export const convertUserInput = (input: string): BallNumbers | null => {
   if (!/^[1-9]+$/.test(input)) {
     return null;
   }
@@ -136,12 +136,12 @@ export const convertUserInput = (input: string): number[] | null => {
     return null;
   }
 
-  return Array.from(input).map((char) => Number(char));
+  return Array.from(input).map((char) => Number(char)) as BallNumbers;
 };
 
 export const compareNumbers = (
-  computerNumber: number[],
-  userNumber: number[]
+  computerNumber: BallNumbers,
+  userNumber: BallNumbers
 ) => {
   const strikeCount = getStrikeCount(computerNumber, userNumber);
   const ballCount = getBallCount(computerNumber, userNumber);
