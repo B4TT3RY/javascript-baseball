@@ -40,6 +40,5 @@ export const handleShowLog = (id: string) => {
   });
 
   addAlert(`${statistics.id}번 게임 기록 종료`);
-
   initializeGame();
 };
